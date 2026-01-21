@@ -1,4 +1,4 @@
-# 🧠🎮 Project IndigoRL — Autonomous Pokémon Yellow Reinforcement Learning Agent
+# 🧠🎮 indigoRL — Autonomous Pokémon Yellow Reinforcement Learning Agent
 
 <!-- ===================================================== -->
 <!-- BANNER IMAGE -->
@@ -7,7 +7,7 @@
 <!-- ===================================================== -->
 
 <p align="center">
-  <img src="docs/banner.png" width="100%" />
+  <img src="assets/banner.png" width="100%" />
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@
 <!-- ===================================================== -->
 
 <p align="center">
-  <img src="docs/demo.gif" width="600" />
+  <img src="assets/demo.gif" width="600" />
 </p>
 
 ---
