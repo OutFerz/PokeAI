@@ -1,128 +1,232 @@
-# 🧠 Project Red-RL: Autonomous Pokémon Yellow Agent
+# 🧠 PokeAI — Autonomous Pokémon Yellow Reinforcement Learning Agent
 
-![Status](https://img.shields.io/badge/Status-Active_Development-success)
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Framework](https://img.shields.io/badge/RL-Stable--Baselines3-orange)
-![Emulator](https://img.shields.io/badge/Emulator-PyBoy-purple)
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active%20Development-success" />
+  <img src="https://img.shields.io/badge/Python-3.11-blue" />
+  <img src="https://img.shields.io/badge/RL-Stable--Baselines3-orange" />
+  <img src="https://img.shields.io/badge/Emulator-PyBoy-purple" />
+</p>
 
-> **Arquitectura:** PPO (Proximal Policy Optimization) + Decodificación de Estado Neuro-Simbólica.
-> **Objetivo:** Entrenar un agente de Inteligencia Artificial capaz de completar *Pokémon Edición Amarilla* desde cero, sin conocimiento previo (Tabula Rasa).
+> **Architecture:** PPO (Proximal Policy Optimization) + Neuro‑Symbolic State Decoding  
+> **Goal:** Train an Artificial Intelligence agent capable of completing **Pokémon Yellow** from scratch, with *zero prior knowledge*
 
-## 📋 Descripción Técnica
+---
 
-Este proyecto implementa una arquitectura de **Aprendizaje por Refuerzo Profundo (Deep RL)** diseñada para resolver entornos de RPG complejos con un horizonte temporal extremadamente largo. 
+## 🎯 Project Overview
 
-A diferencia de los enfoques puramente visuales (que solo "ven" píxeles), este sistema utiliza un **Espacio de Observación Híbrido** que combina:
-1.  **Visión (CNN):** Procesamiento de la pantalla para entender la geometría local y obstáculos.
-2.  **Memoria (RAM):** Lectura directa de la memoria del sistema emulado para obtener contexto global (coordenadas, mapa ID, medallas).
+**PokeAI** is a Deep Reinforcement Learning research project focused on solving **long‑horizon RPG environments**. Pokémon Yellow represents a particularly challenging benchmark due to:
 
-### ✨ Características Clave
+* Extremely sparse rewards
+* Large state space
+* Long-term dependencies (decisions made minutes or hours earlier)
+* Partial observability from pixels alone
 
-* **⚡ Emulación Acelerada:** Utiliza `PyBoy` como entorno base sin interfaz gráfica durante el entrenamiento, permitiendo velocidades superiores a **1000 FPS**.
-* **👁️ Observación Híbrida:** El agente no solo "ve", sino que "sabe" dónde está gracias a la inyección de datos hexadecimales de la RAM en la red neuronal.
-* **🗺️ Exploración Eficiente:** Sistema de recompensas densas basado en coordenadas únicas visitadas $(x, y)$ para mitigar el problema de recompensas dispersas (Sparse Rewards).
-* **🎥 Streamer-Ready Architecture:** Infraestructura asimétrica que permite entrenar a máxima velocidad en segundo plano mientras se visualiza una instancia clonada a 60 FPS fluidos para transmisión en vivo.
-* **⚙️ Optimización de Hardware:** Implementación de `SleepCallback` y gestión de hilos (`OMP_NUM_THREADS=1`) para permitir entrenamiento y streaming simultáneo en CPUs de consumo (ej. i5/Ryzen 5) sin congelar el sistema.
+To overcome these challenges, PokeAI combines **visual perception** with **explicit symbolic game state extraction**, allowing the agent to both *see* and *understand* the game world.
 
-## 🛠️ Stack Tecnológico
+---
 
-| Componente | Tecnología | Uso |
-| :--- | :--- | :--- |
-| **Lenguaje** | Python 3.11 | Lógica del núcleo |
-| **RL Framework** | Stable-Baselines3 | Implementación de PPO y Vectorización de Entornos |
-| **Emulador** | PyBoy | Interfaz de bajo nivel con la ROM de Game Boy |
-| **Visión** | OpenCV / NumPy | Preprocesamiento de frames y renderizado |
-| **Logging** | TensorBoard | Monitoreo de métricas (Loss, Reward, Entropy) en tiempo real |
+## 🧩 Technical Description
 
-## 🚀 Instalación y Configuración
+This project implements a **Deep Reinforcement Learning (Deep RL)** architecture designed for complex Game Boy–era RPGs.
 
-### Prerrequisitos
-* **Python 3.11** (Se recomienda usar Conda).
-* **ROM de Pokémon Yellow:** Debe nombrarse exactamente `PokemonYellow.gb` y colocarse en la carpeta `roms/`.
+Unlike purely vision‑based agents that rely only on raw pixels, PokeAI uses a **Hybrid Observation Space** composed of:
 
-### Guía Paso a Paso
+1. **👁️ Vision (CNN-based)**  
+   Screen processing to understand local geometry, obstacles, and transitions.
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/tu-usuario/pokemon-rl.git](https://github.com/tu-usuario/pokemon-rl.git)
-    cd pokemon-rl
-    ```
+2. **🧠 Memory (RAM Inspection)**  
+   Direct reading of emulator memory to extract global context such as:
 
-2.  **Crear entorno virtual:**
-    ```bash
-    conda create -n poke-rl python=3.11
-    conda activate poke-rl
-    ```
+   * Player coordinates
+   * Current map ID
+   * Progress flags (e.g., badges)
 
-3.  **Instalar dependencias:**
-    ```bash
-    pip install gymnasium pyboy shimmy stable-baselines3[extra] opencv-python torch-directml
-    ```
+This neuro‑symbolic approach dramatically improves sample efficiency and stability during training.
 
-4.  **Generar Estado Inicial (Skip Intro):**
-    Para evitar que el agente pierda horas de entrenamiento en el menú de "Nueva Partida", generamos un estado guardado justo después de la intro.
-    ```bash
-    python src/utils/create_initial_state.py
-    ```
-    *Instrucción: Juega manualmente hasta tener el control del personaje en la habitación de Ash y cierra la ventana.*
+---
 
-## 🏃‍♂️ Ejecución y Flujo de Trabajo
+## ✨ Key Features
 
-Este proyecto está diseñado para funcionar en dos terminales simultáneas: una para el "Cerebro" (Entrenamiento) y otra para los "Ojos" (Streaming).
+* **⚡ Accelerated Emulation**  
+  Uses **PyBoy** in headless mode during training, achieving speeds of **1000+ FPS**.
 
-### 1. Entrenamiento (The Brain) 🧠
-Inicia el bucle de entrenamiento masivo. El sistema es "headless" (sin ventana) para maximizar velocidad.
-* **Uso de CPU:** Optimizado para usar 1-2 núcleos de forma intensiva.
-* **Guardado:** Genera checkpoints automáticos en `experiments/`.
+* **👁️ Hybrid Observations**  
+  The agent not only sees pixels, but *knows* where it is through RAM‑injected state vectors.
+
+* **🗺️ Efficient Exploration**  
+  Dense reward shaping based on unique visited coordinates `(x, y)` to mitigate sparse reward issues.
+
+* **🎥 Streamer‑Ready Architecture**  
+  Asymmetric design allows full‑speed training in the background while a cloned instance runs at **60 FPS** for live visualization or streaming.
+
+* **⚙️ Consumer‑Hardware Optimized**  
+  Thread control (`OMP_NUM_THREADS=1`) and custom `SleepCallback` allow training + streaming on mid‑range CPUs (e.g., i5 / Ryzen 5) without system freezes.
+
+---
+
+## 🛠️ Technology Stack
+
+| Component        | Technology        | Purpose                                      |
+| ---------------- | ----------------- | -------------------------------------------- |
+| **Language**     | Python 3.11       | Core logic                                   |
+| **RL Framework** | Stable‑Baselines3 | PPO implementation & vectorized environments |
+| **Emulator**     | PyBoy             | Low‑level Game Boy emulation                 |
+| **Vision**       | OpenCV, NumPy     | Frame preprocessing & rendering              |
+| **Logging**      | TensorBoard       | Real‑time metrics (reward, loss, entropy)    |
+
+---
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+
+* **Python 3.11** (Conda recommended)
+* **Pokémon Yellow ROM**  
+  Must be named exactly `PokemonYellow.gb` and placed inside the `roms/` directory.
+
+### Step‑by‑Step Guide
+
+#### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/your-username/PokeAI.git
+cd PokeAI
+```
+
+#### 2️⃣ Create a virtual environment
+
+```bash
+conda create -n pokeai python=3.11
+conda activate pokeai
+```
+
+#### 3️⃣ Install dependencies
+
+```bash
+pip install gymnasium pyboy shimmy stable-baselines3[extra] opencv-python torch-directml
+```
+
+#### 4️⃣ Generate the initial save state (Skip Intro)
+
+To prevent the agent from wasting hours navigating menus, create a save state immediately after the intro sequence.
+
+```bash
+python src/utils/create_initial_state.py
+```
+
+> **Instruction:** Manually play until you gain control of the character in Ash’s room, then close the window.
+
+---
+
+## 🏃 Workflow & Execution
+
+PokeAI is designed to run in **two terminals simultaneously**:
+
+* **🧠 Brain:** High‑speed training
+* **👀 Eyes:** Real‑time visualization
+
+---
+
+### 🧠 1. Training (The Brain)
+
+Runs the PPO training loop in headless mode for maximum performance.
+
+* **CPU Usage:** Optimized for 1–2 cores
+* **Checkpoints:** Automatically saved to `experiments/`
 
 ```bash
 python train.py
+```
 
-Nota: Usa Ctrl + C en cualquier momento para pausar y realizar un "Guardado de Emergencia" seguro.
+> Press **Ctrl + C** at any time to trigger a safe emergency checkpoint.
 
-2. Visualización
-Muestra al agente jugando en tiempo real a 60 FPS. Este script detecta automáticamente cuando train.py guarda un nuevo modelo "más inteligente" y lo carga en caliente ("Hot-Reload") sin cerrar la ventana.
+---
 
-Bash
+### 👀 2. Visualization (The Eyes)
+
+Displays the agent playing at **60 FPS**.
+
+* Automatically detects improved models
+* Hot‑reloads new checkpoints without restarting
+
+```bash
 python watch_continuous.py
+```
 
-3. Monitoreo (Analytics) 📊
-Para ver gráficas de recompensa, pérdida (loss) y entropía:
+---
 
-Bash
+### 📊 3. Monitoring (Analytics)
+
+Visualize reward curves, loss, and entropy in real time:
+
+```bash
 tensorboard --logdir experiments/poke_ppo_v1/logs
+```
 
-🧠 Arquitectura del Agente
-Espacio de Acción (Action Space)
-Discreto (6): [DOWN, LEFT, RIGHT, UP, A, B].
+---
 
-Optimización: Se deshabilitaron Start y Select para reducir el ruido estocástico y evitar que el agente se quede atascado en menús.
+## 🧠 Agent Architecture
 
-Sistema de Recompensa (Reward Shaping)
-La función de recompensa actual incentiva la curiosidad pura:
-$$R_t = R_{exploración} + R_{eventos}$$
-Exploración: +1.0 punto por cada coordenada única $(x, y)$ visitada por mapa. Esto empuja al agente a recorrer todo el mapa disponible.
-Penalización de Inactividad: (Implícita) Al no haber recompensas por quedarse quieto, el algoritmo de maximización fuerza el movimiento.
+### Action Space
 
-📂 Estructura del Proyecto
+**Discrete (6 actions):**
 
-pokemon-rl/
-├── config/                 # Hiperparámetros y configuraciones
-├── experiments/            # Checkpoints (.zip) y Logs de TensorBoard
-├── roms/                   # Archivos del juego (.gb)
-├── states/                 # Archivos .state (Save States de PyBoy)
+```
+[DOWN, LEFT, RIGHT, UP, A, B]
+```
+
+> `START` and `SELECT` are intentionally disabled to reduce stochastic noise and avoid menu‑locking behaviors.
+
+---
+
+### Reward Shaping
+
+The current reward function emphasizes **pure exploration**:
+
+[
+R_t = R_{exploration} + R_{events}
+]
+
+* **Exploration Reward:** +1.0 for each unique `(x, y)` coordinate visited per map
+* **Inactivity Penalty (Implicit):** No reward for standing still forces movement through optimization pressure
+
+---
+
+## 📂 Project Structure
+
+```
+PokeAI/
+├── config/                  # Hyperparameters & configs
+├── experiments/             # PPO checkpoints & TensorBoard logs
+├── roms/                    # Game ROMs (.gb)
+├── states/                  # PyBoy save states (.state)
 ├── src/
 │   ├── environment/
-│   │   ├── pokemon_env.py  # Wrapper Gym (Lógica de RAM, Visión y Smooth Ticking)
+│   │   ├── pokemon_env.py   # Gym wrapper (RAM, vision, smooth ticking)
 │   │   └── ...
 │   ├── utils/
-│   │   ├── memory_reader.py # Extracción de direcciones Hex de la RAM
+│   │   ├── memory_reader.py # Hex-level RAM extraction
 │   │   └── ...
-├── train.py                # Script de entrenamiento (Backend)
-├── watch_continuous.py     # Script de visualización para Stream (Frontend)
-└── README.md               # Documentación
+├── train.py                 # Training backend
+├── watch_continuous.py      # Streaming / visualization frontend
+└── README.md
+```
 
-🔮 Roadmap
-[ ] Implementar HippoTorch (S4) para memoria a largo plazo.
+---
 
-[ ] Integrar un VLM (Vision Language Model) para lectura de diálogos en pantalla.
+## 🔮 Roadmap
+
+* [ ] Integrate **HippoTorch / S4** for long‑term memory
+* [ ] Add **Vision‑Language Model (VLM)** for on‑screen dialogue understanding
+* [ ] Badge‑aware curriculum learning
+* [ ] Multi‑objective reward decomposition
+
+---
+
+## 📜 Disclaimer
+
+This project is for **research and educational purposes only**. You must legally own a copy of Pokémon Yellow to use the ROM.
+
+---
+
+⭐ *If you find this project interesting, consider giving it a star!*
