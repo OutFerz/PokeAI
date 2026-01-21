@@ -38,21 +38,21 @@
 
 ## 📚 Table of Contents
 
-- [Project Overview](#-project-overview)
-- [Technical Description](#-technical-description)
-- [Key Features](#-key-features)
-- [Technology Stack](#-technology-stack)
-- [Installation & Setup](#-installation--setup)
-- [Workflow & Execution](#-workflow--execution)
-- [Agent Architecture](#-agent-architecture)
-- [Project Structure](#-project-structure)
-- [Hardware & Scalability](#-hardware--scalability)
-- [Roadmap](#-roadmap)
-- [Disclaimer](#-disclaimer)
+- [Project Overview](#project-overview)
+- [Technical Description](#technical-description)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Installation & Setup](#installation-setup)
+- [Workflow & Execution](#workflow-execution)
+- [Agent Architecture](#agent-architecture)
+- [Project Structure](#project-structure)
+- [Hardware & Scalability](#hardware-scalability)
+- [Roadmap](#roadmap)
+- [Disclaimer](#disclaimer)
 
 ---
 
-## 🎯 Project Overview
+## 🎯 Project Overview <a id="project-overview"></a>
 
 **IndigoRL** is a Deep Reinforcement Learning research project focused on solving **long-horizon RPG environments** using **Pokémon Yellow** as a benchmark.
 
@@ -66,7 +66,7 @@ To overcome these challenges, IndigoRL combines **visual perception** with **exp
 
 ---
 
-## 🧩 Technical Description
+## 🧩 Technical Description <a id="technical-description"></a>
 
 - **Algorithm:** Proximal Policy Optimization (PPO)
 - **Emulator:** PyBoy (headless during training)
@@ -82,7 +82,7 @@ This neuro-symbolic approach significantly improves sample efficiency and traini
 
 ---
 
-## ✨ Key Features
+## ✨ Key Features <a id="key-features"></a>
 
 - ⚡ **Accelerated Emulation** — 1000+ FPS headless training
 - 👁️ **Hybrid Observations** — Vision + RAM decoding
@@ -92,7 +92,7 @@ This neuro-symbolic approach significantly improves sample efficiency and traini
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Technology Stack <a id="technology-stack"></a>
 
 | Component | Technology |
 |---------|-----------|
@@ -104,7 +104,7 @@ This neuro-symbolic approach significantly improves sample efficiency and traini
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Installation & Setup <a id="installation-setup"></a>
 
 ### Prerequisites
 - Python 3.11 (Conda recommended)
@@ -131,7 +131,7 @@ python src/utils/create_initial_state.py
 
 ---
 
-## 🏃 Workflow & Execution
+## 🏃 Workflow & Execution <a id="workflow-execution"></a>
 
 ### 🧠 Training
 ```bash
@@ -157,7 +157,7 @@ tensorboard --logdir experiments/poke_ppo_v1/logs
 
 ---
 
-## 🧠 Agent Architecture
+## 🧠 Agent Architecture <a id="agent-architecture"></a>
 
 **Action Space:**  
 `[DOWN, LEFT, RIGHT, UP, A, B]`  
@@ -170,7 +170,7 @@ R_t = R_exploration + R_events
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure <a id="project-structure"></a>
 
 ```
 indigoRL/
@@ -188,7 +188,7 @@ indigoRL/
 
 ---
 
-## 💻 Hardware & Scalability
+## 💻 Hardware & Scalability <a id="hardware-scalability"></a>
 
 Default settings prioritize compatibility with consumer hardware.  
 Training parallelism can be scaled by editing `train.py` or setting:
@@ -199,14 +199,14 @@ export OMP_NUM_THREADS=8
 
 ---
 
-## 🔮 Roadmap
+## 🔮 Roadmap <a id="roadmap"></a>
 
 - [ ] Integrate **HippoTorch / S4** for long-term memory
 - [ ] Add **Vision-Language Model (VLM)** for on-screen dialogue understanding
 
 ---
 
-## 📜 Disclaimer
+## 📜 Disclaimer <a id="disclaimer"></a>
 
 This project is for **research and educational purposes only**.  
 You must legally own a copy of Pokémon Yellow to use the ROM.
