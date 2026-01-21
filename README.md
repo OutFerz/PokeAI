@@ -37,17 +37,18 @@
 ---
 
 ## 📚 Table of Contents
-- Project Overview
-- Technical Description
-- Key Features
-- Technology Stack
-- Installation & Setup
-- Workflow & Execution
-- Agent Architecture
-- Project Structure
-- Hardware & Scalability
-- Roadmap
-- Disclaimer
+
+- [Project Overview](#-project-overview)
+- [Technical Description](#-technical-description)
+- [Key Features](#-key-features)
+- [Technology Stack](#-technology-stack)
+- [Installation & Setup](#-installation--setup)
+- [Workflow & Execution](#-workflow--execution)
+- [Agent Architecture](#-agent-architecture)
+- [Project Structure](#-project-structure)
+- [Hardware & Scalability](#-hardware--scalability)
+- [Roadmap](#-roadmap)
+- [Disclaimer](#-disclaimer)
 
 ---
 
