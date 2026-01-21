@@ -117,8 +117,8 @@ in an extremely sparse, long-horizon RPG environment.
 ```bash
 git clone https://github.com/OutFerz/indigoRL.git
 cd indigoRL
-conda create -n poke-rl python=3.10
-conda activate poke-rl
+conda create -n indigoRL python=3.10
+conda activate indigoRL
 pip install -r requirements.txt
 ```
 
@@ -160,7 +160,7 @@ experiments/poke_lstm_v1/
 ### 3️⃣ Watch the Agent Play
 
 ```bash
-python watch_continuous.py
+python play.py
 ```
 
 - Real-time 60 FPS playback
@@ -196,7 +196,7 @@ indigoRL/
 ├── roms/
 ├── states/
 ├── train_lstm.py
-├── watch_continuous.py
+├── play.py
 ├── record_state.py
 └── README.md
 ```
