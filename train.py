@@ -16,7 +16,7 @@ from src.environment.pokemon_env import PokemonYellowEnv
 # --- CONFIGURACIÓN ---
 EXPERIMENT_NAME = "poke_ppo_v1"
 TOTAL_TIMESTEPS = 7_000_000 
-NUM_CPU = 2  # Ajustado a tu CPU
+NUM_CPU = 6  # Ajustado a tu CPU
 SAVE_FREQ_PER_ENV = 20000  # Guardará cada (20,000 * 2) = 40,000 pasos reales
 
 # Directorios

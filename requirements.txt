@@ -1,0 +1,8 @@
+gymnasium
+stable-baselines3
+sb3-contrib
+shimmy
+pyboy>=2.0.0
+opencv-python
+scikit-image
+tensorboard
