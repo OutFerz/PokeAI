@@ -16,15 +16,15 @@ class PokemonYellowEnv(Env):
         # --- MEMORY ADDRESSES (Extracted from wram.asm) ---
         self.MEM_EVENT_FLAGS_START = 0xD747
         self.MEM_EVENT_FLAGS_END = 0xD747 + 320 
-        self.MEM_MAP_ID = 0xD35E
+        self.MEM_MAP_ID = 0xD35D
         self.MEM_IS_IN_BATTLE = 0xD057
         self.MEM_ENEMY_HP_HIGH = 0xCFE6
         self.MEM_ENEMY_HP_LOW = 0xCFE7
         self.MEM_MY_HP_HIGH = 0xD16C
         self.MEM_MY_HP_LOW = 0xD16D
         self.MEM_PARTY_LEVELS = 0xD18C
-        self.MEM_X_COORD = 0xD362
-        self.MEM_Y_COORD = 0xD361
+        self.MEM_X_COORD = 0xD361
+        self.MEM_Y_COORD = 0xD360
         self.MEM_PARTY_SPECIES = 0xD164 # List of species in the party
         self.MEM_POKEDEX_OWNED = 0xD2F7 # Start of capture flags (19 bytes)
         self.MEM_EVENT_FLAGS_START = 0xD747
