@@ -5,7 +5,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from src.environment.pokemon_env import PokemonYellowEnv
 import os
 
-# --- CONFIGURACIÓN ---
+# --- CONFIGURATION ---
 ROM_PATH = "roms/PokemonYellow.gb"
 SESSION_NAME = "poke_lstm_v1"
 CHECKPOINT_DIR = f"experiments/{SESSION_NAME}/models"
@@ -14,35 +14,35 @@ TOTAL_TIMESTEPS = 10000000
 NUM_CPU = 6 
 FINAL_MODEL_PATH = f"{CHECKPOINT_DIR}/final_model_optimized"
 
-# Guardado cada 20 actualizaciones de la red
+# Save every 20 network updates
 SAVE_FREQ = (2048 * NUM_CPU * 20) // NUM_CPU 
 
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
 
 if __name__ == "__main__":
-    # 1. Crear entorno Vectorizado
+    # 1. Create Vectorized Environment
     env = make_vec_env(
         lambda: PokemonYellowEnv(ROM_PATH, render_mode='rgb_array'),
         n_envs=NUM_CPU,
         vec_env_cls=SubprocVecEnv
     )
 
-    # 2. Callback para guardado periódico
+    # 2. Callback for periodic saving
     checkpoint_callback = CheckpointCallback(
         save_freq=SAVE_FREQ,
         save_path=CHECKPOINT_DIR,
         name_prefix="lstm_model_optimized"
     )
 
-    # 3. Lógica de Carga o Creación del Modelo
-    # Verificamos si existe el modelo final previo para reanudar
+    # 3. Model Loading or Creation Logic
+    # Check if previous final model exists to resume
     if os.path.exists(f"{FINAL_MODEL_PATH}.zip"):
         print(f"--- REANUDANDO ENTRENAMIENTO: Cargando {FINAL_MODEL_PATH} ---")
         model = RecurrentPPO.load(
             FINAL_MODEL_PATH, 
             env=env, 
-            device="auto", # Detecta automáticamente tu 6600 XT
+            device="auto", # Automatically detects your 6600 XT
             tensorboard_log=LOG_DIR
         )
     else:
@@ -66,19 +66,19 @@ if __name__ == "__main__":
             )
         )
 
-    # 4. Ejecución del aprendizaje
+    # 4. Training execution
     try:
         model.learn(
             total_timesteps=TOTAL_TIMESTEPS, 
             tb_log_name="LSTM_Optimized_Heavy_Batch",
             callback=checkpoint_callback,
             progress_bar=True,
-            reset_num_timesteps=False # Mantiene el conteo global de pasos en TensorBoard
+            reset_num_timesteps=False # Keeps global step count in TensorBoard
         )
     except KeyboardInterrupt:
         print("\n--- Pausa detectada. Guardando progreso... ---")
     finally:
-        # Guardado de seguridad siempre al cerrar
+        # Safety save always on close
         model.save(FINAL_MODEL_PATH)
         env.close()
         print(f"✅ Proceso guardado en: {FINAL_MODEL_PATH}")

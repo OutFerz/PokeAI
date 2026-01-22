@@ -1,7 +1,7 @@
 from pyboy import PyBoy
 import os
 
-# Aseguramos que la carpeta exista
+# Ensure the folder exists
 if not os.path.exists("states"):
     os.makedirs("states")
 
@@ -10,17 +10,17 @@ print("1. Se abrirá el juego. Juega la intro (Usa Flechas, A=Z, B=X, Start=Ente
 print("2. Cuando aparezcas en la habitación de Ash y tengas el control: CIERRA LA VENTANA.")
 print("3. El estado se guardará automáticamente en 'states/start.state'.")
 
-# Iniciamos PyBoy (arranca automáticamente en la v2.0)
+# Initialize PyBoy (starts automatically in v2.0)
 pyboy = PyBoy("roms/PokemonYellow.gb", window="SDL2")
 
 try:
-    # Bucle infinito que mantiene el juego corriendo hasta que cierras la ventana
+    # Infinite loop that keeps the game running until you close the window
     while pyboy.tick():
         pass
 except KeyboardInterrupt:
     pass
 
-# Al salir del bucle (cerrar ventana), guardamos
+# On loop exit (window close), we save
 print("\nGuardando estado...")
 with open("states/start.state", "wb") as f:
     pyboy.save_state(f)

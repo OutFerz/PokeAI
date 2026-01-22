@@ -1,25 +1,25 @@
-# Ignorar archivos del sistema
+# Ignore system files
 __pycache__/
 *.pyc
 .DS_Store
 *.py[cod]
 *.so
 
-# Ignorar entornos virtuales
+# Ignore virtual environments
 .env
 .venv
 env/
 venv/
 *.conda
 
-# Ignorar la ROM (ILEGAL subirla)
+# Ignore the ROM (ILLEGAL to upload)
 roms/*.gb
 roms/*.gbc
 roms/*.gba
 
-# Ignorar los modelos pesados (opcional, pero recomendado si pesan GBs)
+# Ignore heavy models (optional, but recommended if they weigh GBs)
 experiments/
 
-# Ignorar carpetas de IDE
+# Ignore IDE folders
 .vscode/
 .idea/

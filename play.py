@@ -6,14 +6,14 @@ import numpy as np
 from sb3_contrib import RecurrentPPO
 from src.environment.pokemon_env import PokemonYellowEnv
 
-# --- CONFIGURACIÓN ---
+# --- CONFIGURATION ---
 MODEL_DIR = "experiments/poke_lstm_v1/models"
 ROM_PATH = "roms/PokemonYellow.gb"
 SCALE = 3
-FPS = 60  # Velocidad objetivo real
-FRAMES_PER_ACTION = 24 # 🔥 DEBE COINCIDIR con el .tick() de tu pokemon_env.py
+FPS = 60  # Target real speed
+FRAMES_PER_ACTION = 24 # 🔥 MUST MATCH with .tick() in your pokemon_env.py
 
-# --- ESTÉTICA GAMEBOY ---
+# --- GAMEBOY AESTHETICS ---
 GB_CASE = (180, 180, 180)    
 GB_SCREEN_BORDER = (100, 100, 100)
 GB_DPAD_DARK = (40, 40, 40)  
@@ -35,7 +35,7 @@ def get_latest_model():
     if not list_of_files: return None
     return max(list_of_files, key=os.path.getctime)
 
-# --- FUNCIONES DE DIBUJO ---
+# --- DRAWING FUNCTIONS ---
 def draw_gb_button_circle(panel, center, radius, base_color, light_color, text, is_pressed):
     cv2.circle(panel, center, radius, base_color, -1)
     inner_color = COLOR_ON_NEON if is_pressed else light_color
@@ -72,7 +72,7 @@ def draw_gamepad_panel(pressed_btn_idx, height, is_lstm=False):
 def main():
     print("--- STREAM GAME BOY VISUALIZER (SMOOTH CINEMA MODE) ---")
     
-    # Render_mode='rgb_array' para que PyBoy no abra su ventana, solo nosotros
+    # Render_mode='rgb_array' so PyBoy doesn't open its window, only we do
     env = PokemonYellowEnv(ROM_PATH, render_mode="rgb_array") 
     
     current_model_path = None
@@ -80,12 +80,12 @@ def main():
     lstm_states = None 
     episode_starts = np.ones((1,), dtype=bool)
     
-    # Obs inicial
+    # Initial Obs
     obs, _ = env.reset()
 
     try:
         while True:
-            # 1. BUSCAR CEREBRO NUEVO
+            # 1. SEARCH FOR NEW BRAIN
             latest_model_path = get_latest_model()
             if not latest_model_path:
                 print("Esperando primer modelo...", end="\r")
@@ -94,14 +94,14 @@ def main():
                 
             if latest_model_path != current_model_path:
                 print(f"[UPDATE] Cargando: {os.path.basename(latest_model_path)}")
-                # Reiniciamos el entorno visual al cargar modelo nuevo para ver desde el inicio
+                # Reset visual environment when loading new model to see from start
                 obs, _ = env.reset()
                 model = RecurrentPPO.load(latest_model_path, env=env)
                 current_model_path = latest_model_path
                 lstm_states = None
                 episode_starts = np.ones((1,), dtype=bool)
             
-            # 2. LA IA PIENSA (1 vez cada 24 frames)
+            # 2. AI THINKS (1 time every 24 frames)
             if model:
                 action_idx, lstm_states = model.predict(
                     obs, 
@@ -112,30 +112,30 @@ def main():
             else:
                 action_idx = env.action_space.sample()
 
-            # 3. EJECUCIÓN SUAVE (Desenrollamos el loop temporal)
-            # En lugar de env.step() que salta 24 frames, lo hacemos a mano paso a paso
+            # 3. SMOOTH EXECUTION (Unroll the temporal loop)
+            # Instead of env.step() that skips 24 frames, we do it manually step by step
             
-            # Convertimos índice a nombre de botón (ej: 4 -> 'a')
+            # Convert index to button name (e.g. 4 -> 'a')
             action_name = env.valid_actions[action_idx]
             frames_to_hold = 12            
-            # 🔥 LOOP DE RENDERIZADO SUAVE (rellenamos los huecos)
+            # 🔥 SMOOTH RENDERING LOOP (fill the gaps)
             for i in range(FRAMES_PER_ACTION):
                 frame_start = time.time()
                 
                 if i < frames_to_hold:
                     env.pyboy.button(action_name)
                 
-                # Avanzamos SOLO 1 frame
+                # Advance ONLY 1 frame
                 env.pyboy.tick(1) 
                 
-                # --- DIBUJAR ---
+                # --- DRAW ---
                 game_pixels = env.pyboy.screen.ndarray # PyBoy 2.0
                 if game_pixels.shape[2] == 4: game_pixels = game_pixels[:, :, :3]
                 game_bgr = cv2.cvtColor(game_pixels, cv2.COLOR_RGB2BGR)
                 h, w, _ = game_bgr.shape
                 game_view = cv2.resize(game_bgr, (w * SCALE, h * SCALE), interpolation=cv2.INTER_NEAREST)
                 
-                # Dibujamos panel (mantenemos el botón presionado visualmente)
+                # Draw panel (keep button visually pressed)
                 gamepad_view = draw_gamepad_panel(action_idx, height=game_view.shape[0], is_lstm=True)
                 final_visual = np.hstack((game_view, gamepad_view))
                 cv2.imshow("indigoRL | Smooth View", final_visual)
@@ -143,18 +143,18 @@ def main():
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     raise KeyboardInterrupt
 
-                # --- CONTROL DE FPS ---
+                # --- FPS CONTROL ---
                 frame_time = time.time() - frame_start
                 delay = (1.0 / FPS) - frame_time
                 if delay > 0:
                     time.sleep(delay)
             
-            # 4. ACTUALIZAR OBSERVACIÓN REAL
-            # Una vez pasados los 24 frames, tomamos la foto para la siguiente decisión de la IA
-            # Usamos la función interna _get_obs() porque evitamos llamar a step()
+            # 4. UPDATE REAL OBSERVATION
+            # Once 24 frames pass, we take the snapshot for the next AI decision
+            # Use internal _get_obs() because we avoid calling step()
             obs = env._get_obs()
             
-            # Reset de flag de episodio
+            # Reset episode flag
             episode_starts = np.zeros((1,), dtype=bool)
 
     except KeyboardInterrupt: pass
